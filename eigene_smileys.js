@@ -3,14 +3,26 @@
 // @namespace      wop
 // @description    creates a smileybox below the standard-smiles
 // @include        http://forum.worldofplayers.*/forum/*
-// @author         Satans Krümelmonster
+// @author         Satans KrÃ¼melmonster
 // @version        2.5
 // ==/UserScript==
 
-function loaded(){
-  var fileName = getFileName();
-  var get      = getGet();
-  if(cPanelFiles.contains(fileName)){ //controlpanel-page
+//OPERA EDITION
+// don't forget to install Grease Monkey Emulation Script http://userscripts.org/scripts/review/88932
+window.addEventListener('DOMContentLoaded', function(){  //#Junk: Keine Ahnung, erst mit dieser VerrÃ¤nkung wird der Script aktiv, wenn auch das DOM geladen wird
+	loaded();
+},false);
+
+function loaded(){ 
+  
+	cPanelFiles = new Array("calendar", "moderation", "private", "profile", "subscription", "usercp");  //#Junk: Irgendwie wills die Variablenzuweisungen innen haben
+	editorFiles = new Array("newthread", "newreply", "infraction", "editpost");
+	lang        = new phrases(GM_getValue("lang", "EN"));
+	smileys   = getSmileys();
+	images     = new Array(); // images to preload
+	var fileName = getFileName();
+	var get      = getGet();
+  if(contains(cPanelFiles,fileName)){ //controlpanel-page
     //create elements
     var div1    = document.createElement("div");
     var h2      = document.createElement("h2");
@@ -55,7 +67,9 @@ function loaded(){
     div1.appendChild(div2);             //  lang.panel    .head    .add      .edit   .config
     
     //insert element into html
+	
     document.getElementById("usercp_nav").appendChild(div1);
+	
 
     if(fileName=="usercp"){ //possible editing-page
       if(get.ownsmiley == "add"){ // add smiley
@@ -189,17 +203,22 @@ function loaded(){
               }
             } else if(get.process == "delete"){
               GM_deleteValue("data");
-              var k=0;
+			  var k=0;
+			 
               for(var i=0;i<smileys.length; i++){
                 if(i!=(get.smiley-1)){
+				
+				 
                   GM_setValue("data."+(k+1)+".alt", smileys[i].alt);
                   GM_setValue("data."+(k+1)+".title", smileys[i].title);
                   GM_setValue("data."+(k+1)+".url", smileys[i].url);
                   GM_setValue("data."+(k+1)+".shortcut", smileys[i].shortcut);
+                  k++
                   
-                  k++;
                 }
               }
+			  
+			  
               document.getElementById("ownsmiley_body").innerHTML = lang.edit.remove;
             } else {
               document.getElementById("ownsmiley_body").innerHTML = lang.edit.noprocess;
@@ -240,7 +259,7 @@ function loaded(){
     }
   }
   
-  if(editorFiles.contains(fileName) || (fileName == "private" && get["do"] == "newpm")){ // add smileybox
+  if(contains(editorFiles,fileName) || (fileName == "private" && get["do"] == "newpm")){ // add smileybox
     unsafeWindow.console.log("ownSmiley :: Editorfile");
     if(smileys.length>0){
       var newcont=  "<fieldset style=\"border: 1px solid white; border-radius: 5px;\">"+
@@ -259,18 +278,29 @@ function loaded(){
       box.setAttribute("style", "height: auto");
       box.innerHTML = newcont;
 
-      document.getElementById('vB_Editor_001').firstElementChild.appendChild(box);
+      
+	 
+		document.getElementById('vB_Editor_001').firstElementChild.appendChild(box);
+	 
       unsafeWindow.console.log("ownSmiley :: Smileybox added");
       
       var smilie=document.getElementById('vB_Editor_001_smiliebox');
       
       var replace = "";
       
-      for(var i=0;i<smileys.length;i++){
+     
+	  
+	  for(var i=0;i<smileys.length;i++){ //#Junk: Dirty, aber dÃ¼rfte bei den aufkommenden Datenmengen gehen
         if(smileys[i].shortcut != false)
-          replace += "vB_Editor['vB_Editor_001'].editor.textarea.$.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value.replace('"+smileys[i].shortcut+"', '[img]"+smileys[i].url+"[/img]'); ";
+          replace += "vB_Editor['vB_Editor_001'].editor.textarea.$.value; while(vB_Editor['vB_Editor_001'].editor.textarea.$.value.indexOf('"+smileys[i].shortcut+"') !=-1){vB_Editor['vB_Editor_001'].editor.textarea.$.value=vB_Editor['vB_Editor_001'].editor.textarea.$.value.replace('"+smileys[i].shortcut+"', '[img]"+smileys[i].url+"[/img]');}  ";
       }
-      document.getElementsByName('vbform')[0].setAttribute("onsubmit", "if(document.getElementById('cb_disablesmilies').checked == false){"+replace+" vB_Editor['vB_Editor_001'].editor.textarea.$.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length; vB_Editor['vB_Editor_001'].textarea.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value; vB_Editor['vB_Editor_001'].textarea.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length;} YAHOO.util.Event.removeListener(window,'beforeunload'); return vB_Editor['vB_Editor_001'].prepare_submit(this.subject.value, 4)");
+	  
+	 
+	//Mag irgendwie das erste length - Setzen nicht, wegen nem Modification Error
+	document.getElementsByName('vbform')[0].setAttribute("onsubmit", "if(document.getElementById('cb_disablesmilies').checked == false){"+replace+" vB_Editor['vB_Editor_001'].textarea.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value; } YAHOO.util.Event.removeListener(window,'beforeunload'); return vB_Editor['vB_Editor_001'].prepare_submit(this.subject.value, 4)");
+	
+	 
+	  
       
       unsafeWindow.console.log("ownSmiley :: Shortcuts initialized");
       
@@ -339,7 +369,7 @@ function getSmileys(){
     if(data[i].indexOf("data")!=-1){
       id   = parseInt(data[i].substring(data[i].indexOf(".")+1, data[i].lastIndexOf(".")));
       type = data[i].substr(data[i].lastIndexOf(".")+1);
-      if(!got.contains(id)){
+      if(!contains(got,id)){
         smiley[id-1] = new Object();
         got[got.length] = id;
       }
@@ -440,61 +470,63 @@ function phrases(langcode){
   // overwrite language
   if(langcode == "DE"){ //german
     this.panel.head     = "Eigene Smileys";
-    this.panel.add      = "Eigenen Smiley hinzufügen";
+    this.panel.add      = "Eigenen Smiley hinzufÃ¼gen";
     this.panel.edit     = "Eigene Smileys bearbeiten";
     this.panel.config   = "Einstellungen";
 
-    this.add.head       = "Eigenen Smiley hinzufügen";
-    this.add.text       = "Fügt einen Smiley in deine Smileybox hinzu.<br>Später kannst du ihn mit einem Klick auf den \"Eigene Smileys bearbeiten\"-Link in deinem Kontrollzentrum bearbeiten.";
-    this.add.required   = "Benötigte Angabe";
+    this.add.head       = "Eigenen Smiley hinzufÃ¼gen";
+    this.add.text       = "FÃ¼gt einen Smiley in deine Smileybox hinzu.<br>SpÃ¤ter kannst du ihn mit einem Klick auf den \"Eigene Smileys bearbeiten\"-Link in deinem Kontrollzentrum bearbeiten.";
+    this.add.required   = "BenÃ¶tigte Angabe";
     this.add.optional   = "Optionale Angabe";
     this.add.url        = new Array("Die URL des Smileys", "URL des Smileys");
     this.add.title      = new Array("Erscheint bei kurzem stoppen der Maus auf dem Smiley", "Titel");
     this.add.alt        = new Array("Erscheint, wenn das Bild noch geladen werden muss oder nicht geladen werden kann.", "Alternativer Text");
     this.add.shortcut   = new Array("Wird beim absenden des Posts automatisch in den img-Tag umgewandelt. Achtung: Sollte kein Standardsmileycode sein.", "Shortcut");
-    this.add.success    = "Smiley erfolgreich hinzugefügt.";
-    this.add.failture   = "Der Smiley wurde nicht hinzugefügt. Es müssen alle Formularfelder ausgefüllt werden.";
+    this.add.success    = "Smiley erfolgreich hinzugefÃ¼gt.";
+    this.add.failture   = "Der Smiley wurde nicht hinzugefÃ¼gt. Es mÃ¼ssen alle Formularfelder ausgefÃ¼llt werden.";
     this.add.save       = "Speichern";
     
     this.edit.head      = "Eigene Smileys bearbeiten";
-    this.edit.text      = "Wähle einen Smiley aus.";
-    this.edit.nosmileys = "Es gibt keine Smileys, die bearbeitet werden könnten.";
+    this.edit.text      = "WÃ¤hle einen Smiley aus.";
+    this.edit.nosmileys = "Es gibt keine Smileys, die bearbeitet werden kÃ¶nnten.";
     this.edit.noprocess = "Was soll mit dem Smiley gemacht werden?";
-    this.edit.required  = "Benötigte Angabe";
+    this.edit.required  = "BenÃ¶tigte Angabe";
     this.edit.optional  = "Optionale Angabe";
     this.edit.url       = new Array("Die URL des Smileys", "URL des Smileys");
     this.edit.title     = new Array("Erscheint bei kurzem stoppen der Maus auf dem Smiley", "Titel");
     this.edit.alt       = new Array("Erscheint, wenn das Bild noch geladen werden muss oder nicht geladen werden kann.", "Alternativer Text");
     this.edit.shortcut   = new Array("Wird beim absenden des Posts automatisch in den img-Tag umgewandelt. Achtung: Sollte kein Standardsmileycode sein.", "Shortcut");
-    this.edit.remove    = "Smiley erfolgreich gelöscht";
-    this.edit.select.edit = "Ausgewählten Smiley bearbeiten";
-    this.edit.select.remove = "Ausgewählten Smiley löschen";
+    this.edit.remove    = "Smiley erfolgreich gelÃ¶scht";
+    this.edit.select.edit = "AusgewÃ¤hlten Smiley bearbeiten";
+    this.edit.select.remove = "AusgewÃ¤hlten Smiley lÃ¶schen";
     this.edit.select.button = "Los";
     this.edit.edit.success  = "Smiley erfolgreich bearbeitet.";
-    this.edit.edit.failture = "Smiley konnte nicht bearbeitet werden. Fülle alle Pflichfelder aus.";
+    this.edit.edit.failture = "Smiley konnte nicht bearbeitet werden. FÃ¼lle alle Pflichfelder aus.";
     this.edit.noshortcut = "<i>Kein Shortcut definiert</i>";
-    this.edit.save      = "Änderungen speichern";
+    this.edit.save      = "Ã„nderungen speichern";
     
     this.set.head       = "Einstellungen bearbeiten";
-    this.set.text       = "Hier können die Einstellungen bearbeitet werden.";
+    this.set.text       = "Hier kÃ¶nnen die Einstellungen bearbeitet werden.";
     this.set.title      = new Array("Der Titel der Eigene-Smiley-Box", "Boxtitel");
     this.set.lang       = new Array("Die Sprache im Kontrollzentrum", "Sprache");
-    this.set.adjust     = new Array("Gibt an, ob das Editortextfeld automatisch auf die Höhe der Smileybox angepasst wird, falls die Boxen zusammen großer sind, als das Textfeld.", "Editortextfeld anpassen");
+    this.set.adjust     = new Array("Gibt an, ob das Editortextfeld automatisch auf die HÃ¶he der Smileybox angepasst wird, falls die Boxen zusammen groÃŸer sind, als das Textfeld.", "Editortextfeld anpassen");
     this.set.adjustment.y = "Ja";
     this.set.adjustment.n = "Nein";
-    this.set.beautify   = new Array("Editorfesnster verschönern", "Verschönerung");
+    this.set.beautify   = new Array("Editorfesnster verschÃ¶nern", "VerschÃ¶nerung");
     this.set.beautification.y = "Yes";
     this.set.beautification.n = "No";
     this.set.save       = "Einstellungen speichern.";
     this.set.boxtitledefault = "Eigene Smileys";
     this.set.success    = "Einstellung gespeichert";
-    this.set.failture   = "Einstellungen konnten nicht gespeichert werden.<br>Es müssen alle Formularfelder ausgefüllt werden.";
+    this.set.failture   = "Einstellungen konnten nicht gespeichert werden.<br>Es mÃ¼ssen alle Formularfelder ausgefÃ¼llt werden.";
 
   }
 }
 
 function addnewsmiley(url, title, alt, shortcut){
+	
   if(url && url !=""){
+	
     smileys[smileys.length] = new Object();
     smileys[smileys.length-1].url      = decodeURIComponent(url);
     smileys[smileys.length-1].alt      = (!alt)      ? false : unescape(alt).replace("+"," "); // Alternative Text is optional
@@ -509,8 +541,9 @@ function addnewsmiley(url, title, alt, shortcut){
       GM_setValue("data."+(i+1)+".url", smileys[i].url);
       GM_setValue("data."+(i+1)+".shortcut", smileys[i].shortcut);
     }
+	
     document.getElementById("ownsmiley_body").innerHTML=lang.add.success;
-  } else {
+  } else {  
     document.getElementById("ownsmiley_body").innerHTML=lang.add.failture;
   }
 }
@@ -561,31 +594,40 @@ function getGet(){
   }
   return new Object();
 }
-
-Array.prototype.contains=function(needle){
+function contains(array, item)//#Junk: Opera mag irgendwie das mit dem Prototypen irgendwie nicht (oder ich hab den genauen Fehler dabei nicht gefunden)
+{
+	for(var i=0;i<array.length;i++)
+	{
+		if(array[i]==item){
+		  return true;
+		}
+	}
+	return false;
+}
+/*Array.prototype.contains=function(needle){  
   for(var i=0;i<this.length;i++){
     if(this[i]==needle){
       return true;
     }
   }
   return false;
-}
+}*/
 
 document.getElementsByClassName = function(classname){
   var nodes = document.getElementsByTagName("*");
   var ret = new Array();
   var retcount = 0;
   for(var i=0;i<nodes.length;i++){
-    if(nodes[i].classList.contains(classname)){
+    if(contains(nodes[i].classList,classname)){
       ret[retcount++]=nodes[i];
     }
   }
   return ret;
 }
+var cPanelFiles;
+var editorFiles; 
+var lang;        
+var smileys;    
+var images;    
 
-var cPanelFiles = new Array("calendar", "moderation", "private", "profile", "subscription", "usercp");
-var editorFiles = new Array("newthread", "newreply", "infraction", "editpost");
-var lang        = new phrases(GM_getValue("lang", "EN"));
-var smileys     = getSmileys();
-var images      = new Array(); // images to preload
-document.onload=loaded();
+//asd
