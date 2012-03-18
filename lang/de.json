@@ -1,0 +1,65 @@
+{
+    'panel': {
+        'head':     "Eigene Smileys",
+        'add':      "Eigenen Smiley hinzufügen",
+        'edit':     "Eigene Smileys bearbeiten",
+        'config':   "Einstellungen"
+    },
+    'add': {
+        'head':     "Eigenen Smiley hinzufügen",
+        'text':     "Fügt einen Smiley in deine Smileybox hinzu.<br>Später kannst du ihn mit einem Klick auf den \"Eigene Smileys bearbeiten\"-Link in deinem Kontrollzentrum bearbeiten.",
+        'required': "Benötigte Angabe",
+        'optional': "Optionale Angabe",
+        'url':      ["Die URL des Smileys", "URL des Smileys"],
+        'title':    ["Erscheint bei kurzem stoppen der Maus auf dem Smiley", "Titel"],
+        'alt':      ["Erscheint, wenn das Bild noch geladen werden muss oder nicht geladen werden kann.", "Alternativer Text"],
+        'shortcut': ["Wird beim absenden des Posts automatisch in den img-Tag umgewandelt. Achtung: Sollte kein Standardsmileycode sein.", "Shortcut"],
+        'success':  "Smiley erfolgreich hinzugefügt.",
+        'failure':  "Der Smiley wurde nicht hinzugefügt. Es müssen alle Formularfelder ausgefüllt werden.",
+        'save':     "Speichern"
+    },
+    'edit': {
+        'head':         "Eigene Smileys bearbeiten",
+        'text':         "Wähle einen Smiley aus.",
+        'nosmilies':    "Es gibt keine Smileys, die bearbeitet werden könnten.",
+        'noprocess':    "Was soll mit dem Smiley gemacht werden?",
+        'required':     "Benötigte Angabe",
+        'optional':     "Optionale Angabe",
+        'url':          ["Die URL des Smileys", "URL des Smileys"],
+        'title':        ["Erscheint bei kurzem stoppen der Maus auf dem Smiley", "Titel"],
+        'alt':          ["Erscheint, wenn das Bild noch geladen werden muss oder nicht geladen werden kann.", "Alternativer Text"],
+        'shortcut':     ["Wird beim absenden des Posts automatisch in den img-Tag umgewandelt. Achtung: Sollte kein Standardsmileycode sein.", "Shortcut"],
+        'remove':       "Smiley erfolgreich gelöscht",
+        'select': {
+            'edit':     "Ausgewählten Smiley bearbeiten",
+            'remove':   "Ausgewählten Smiley löschen",
+            'button':   "Los"
+        },
+        'edit': {
+            'success':  "Smiley erfolgreich bearbeitet.",
+            'failure':  "Smiley konnte nicht bearbeitet werden. Fülle alle Pflichfelder aus."
+        },
+        'noshortcut':   "<i>Kein Shortcut definiert</i>",
+        'save':         "Änderungen speichern"
+    },
+    'set': {
+        'head':         "Einstellungen bearbeiten",
+        'text':         "Hier können die Einstellungen bearbeitet werden.",
+        'title':        ["Der Titel der Eigene-Smiley-Box", "Boxtitel"],
+        'lang':         ["Die Sprache im Kontrollzentrum", "Sprache"],
+        'adjust':       ["Gibt an, ob das Editortextfeld automatisch auf die Höhe der Smileybox angepasst wird, falls die Boxen zusammen großer sind, als das Textfeld.", "Editortextfeld anpassen"],
+        'adjustment': {
+            'y': "Ja",
+            'n': "Nein"
+        },
+        'beautify':     ["Editorfesnster verschönern", "Verschönerung"],
+        'beautification': {
+            'y': "Ja",
+            'n': "Nein"
+        },
+        'save':         "Einstellungen speichern",
+        'boxtitledefault': "Eigene Smileys",
+        'success':      "Einstellung gespeichert",
+        'failure':      "Einstellungen konnten nicht gespeichert werden.<br>Es müssen alle Formularfelder ausgefüllt werden."
+    }
+}

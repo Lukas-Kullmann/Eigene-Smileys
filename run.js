@@ -1,19 +1,15 @@
-include(helpers.js)
-include(functions/add_smileylist.js)
-include(functions/addnewsmiley.js)
-include(functions/getadjustmentradio.js)
-include(functions/getbeautifyradio.js)
+include(functions/add_smilielist.js)
+include(functions/addnewsmilie.js)
+include(functions/deleteAll.js)
 include(functions/getFileName.js)
 include(functions/getGet.js)
-include(functions/getlangselect.js)
-include(functions/getSmileys.js)
+include(functions/getLang.js)
+include(functions/getSmilies.js)
 include(functions/hideold.js)
 include(functions/loaded.js)
-include(functions/phrases.js)
 
 var cPanelFiles = new Array("calendar", "moderation", "private", "profile", "subscription", "usercp");
 var editorFiles = new Array("newthread", "newreply", "infraction", "editpost");
-var lang        = new phrases(GM_getValue("lang", "EN"));
-var smileys     = getSmileys();
+var smilies     = getSmilies();
 var images      = new Array(); // images to preload
-document.onload=loaded();
+loaded();
