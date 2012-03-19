@@ -119,7 +119,7 @@ function loaded(){
                 if(smilies[i].shortcut != false)
                     replace += "vB_Editor['vB_Editor_001'].editor.textarea.$.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value.replace(new RegExp('"+smilies[i].shortcut+"', 'g'), '[img]"+smilies[i].url+"[/img]'); ";
             }
-            document.getElementsByName('vbform')[0].setAttribute("onsubmit", "if(document.getElementById('cb_disablesmilies').checked == false){"+replace+" vB_Editor['vB_Editor_001'].editor.textarea.$.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length; vB_Editor['vB_Editor_001'].textarea.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value; vB_Editor['vB_Editor_001'].textarea.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length;} YAHOO.util.Event.removeListener(window,'beforeunload'); return vB_Editor['vB_Editor_001'].prepare_submit(this.subject.value, 4)");
+            jQuery('.vbform:first').attr("onsubmit", "if(document.getElementById('cb_disablesmilies').checked == false){"+replace+" vB_Editor['vB_Editor_001'].editor.textarea.$.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length; vB_Editor['vB_Editor_001'].textarea.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value; vB_Editor['vB_Editor_001'].textarea.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length;} YAHOO.util.Event.removeListener(window,'beforeunload'); return vB_Editor['vB_Editor_001'].prepare_submit(this.subject.value, 4)");
 
             unsafeWindow.console.log("ownSmilie :: Shortcuts initialized");
 
