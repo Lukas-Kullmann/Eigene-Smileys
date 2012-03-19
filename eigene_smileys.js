@@ -4,7 +4,7 @@
 // @description    creates a smileybox below the standard-smiles
 // @include        http://forum.worldofplayers.*/forum/*
 // @author         Satans Krümelmonster
-// @version        2.5
+// @version        2.5.4
 // ==/UserScript==
 
 //OPERA EDITION
@@ -13,8 +13,8 @@ window.addEventListener('DOMContentLoaded', function(){  //#Junk: Keine Ahnung, 
 	loaded();
 },false);
 
-function loaded(){ 
-  
+function loaded(){
+
 	cPanelFiles = new Array("calendar", "moderation", "private", "profile", "subscription", "usercp");  //#Junk: Irgendwie wills die Variablenzuweisungen innen haben
 	editorFiles = new Array("newthread", "newreply", "infraction", "editpost");
 	lang        = new phrases(GM_getValue("lang", "EN"));
@@ -31,45 +31,52 @@ function loaded(){
     var li1     = document.createElement("li");
     var li2     = document.createElement("li");
     var li3     = document.createElement("li");
+    var li4      = document.createElement("li");
     var a_add   = document.createElement("a");
     var a_edit  = document.createElement("a");
     var a_set   = document.createElement("a");
+    var a_export = document.createElement("a");
 
     //set attributes
     div1.setAttribute("class", "block");
-    
+
     h2.setAttribute("class", "blockhead");
     div2.setAttribute("class", "blockbody");
     ul.setAttribute("class", "blockrow");
     a_add.setAttribute("href", "usercp.php?ownsmiley=add");
     a_edit.setAttribute("href", "usercp.php?ownsmiley=edit");
     a_set.setAttribute("href", "usercp.php?ownsmiley=set");
-    
+    a_export.setAttribute("href", "usercp.php?ownsmiley=export");
+
     //set texts
     h2.appendChild(document.createTextNode(lang.panel.head));
     a_add.appendChild(document.createTextNode(lang.panel.add));
     a_edit.appendChild(document.createTextNode(lang.panel.edit));
     a_set.appendChild(document.createTextNode(lang.panel.config));
+    a_export.appendChild(document.createTextNode(lang.panel.export));
 
     //merge texts
     li1.appendChild(a_add);             //                        STRUCTURE
     ul.appendChild(li1);                //
                                         //                   ---- div.block ---
-    li2.appendChild(a_edit);            //                  |                  | 
-    ul.appendChild(li2);                //                 h2            div.blockbody 
+    li2.appendChild(a_edit);            //                  |                  |
+    ul.appendChild(li2);                //                 h2            div.blockbody
                                         //                  |                  |
     li3.appendChild(a_set);             //                  |         --- ul.blockrow ---
     ul.appendChild(li3);                //                  |        |         |         |
+
+    li4.appendChild(a_export);
+    ul.appendChild(li4);
                                         //                  |       li         li       li
     div2.appendChild(ul);               //                  |        |         |         |
                                         //                  |        a         a         a
     div1.appendChild(h2);               //                  |        |         |         |
     div1.appendChild(div2);             //  lang.panel    .head    .add      .edit   .config
-    
+
     //insert element into html
-	
+
     document.getElementById("usercp_nav").appendChild(div1);
-	
+
 
     if(fileName=="usercp"){ //possible editing-page
       if(get.ownsmiley == "add"){ // add smiley
@@ -188,37 +195,37 @@ function loaded(){
                   smileys[get.smiley-1].alt      = (!get.alt)      ? false : unescape(get.alt).replace("+"," "); // Alternative Text is optional
                   smileys[get.smiley-1].title    = (!get.title)    ? false : unescape(get.title).replace("+"," "); // Title is optional
                   smileys[get.smiley-1].shortcut = (!get.shortcut) ? false : unescape(get.shortcut).replace("+", " "); // shortcut is optional
-                  
+
                   GM_deleteValue("data");
-    
+
                   for(var i = 0;i<smileys.length;i++){
                     GM_setValue("data."+(i+1)+".alt", smileys[i].alt);
                     GM_setValue("data."+(i+1)+".title", smileys[i].title);
                     GM_setValue("data."+(i+1)+".url", smileys[i].url);
                     GM_setValue("data."+(i+1)+".shortcut", smileys[i].shortcut);
                   }
-                  
+
                   document.getElementById("ownsmiley_body").innerHTML = lang.edit.edit.success;
                 }
               }
             } else if(get.process == "delete"){
               GM_deleteValue("data");
 			  var k=0;
-			 
+
               for(var i=0;i<smileys.length; i++){
                 if(i!=(get.smiley-1)){
-				
-				 
+
+
                   GM_setValue("data."+(k+1)+".alt", smileys[i].alt);
                   GM_setValue("data."+(k+1)+".title", smileys[i].title);
                   GM_setValue("data."+(k+1)+".url", smileys[i].url);
                   GM_setValue("data."+(k+1)+".shortcut", smileys[i].shortcut);
                   k++
-                  
+
                 }
               }
-			  
-			  
+
+
               document.getElementById("ownsmiley_body").innerHTML = lang.edit.remove;
             } else {
               document.getElementById("ownsmiley_body").innerHTML = lang.edit.noprocess;
@@ -255,10 +262,16 @@ function loaded(){
                 "<button class=\"button\">"+lang.set.save+"</button>"+                          // Save-button
               "</form>";
         }
-      }
+      } else if(get.ownsmiley == "export"){
+        hideold();
+        document.getElementById('ownsmiley_head').innerHTML=lang.export.title;
+        document.getElementById("ownsmiley_body").innerHTML=
+            lang.export.text+"<br><br>"+
+            '<textarea cols="150" rows="20">'+JSON.stringify(smileys)+'</textarea>';
+       }
     }
   }
-  
+
   if(contains(editorFiles,fileName) || (fileName == "private" && get["do"] == "newpm")){ // add smileybox
     unsafeWindow.console.log("ownSmiley :: Editorfile");
     if(smileys.length>0){
@@ -271,39 +284,39 @@ function loaded(){
         newcont+=add_ownsmileylist(++j);
       }
       newcont+="</ul></fieldset>";
-      
+
       var box = document.createElement('div');
       box.setAttribute("class", "editor_smiliebox");
       box.setAttribute("id", "own_smileybox");
       box.setAttribute("style", "height: auto");
       box.innerHTML = newcont;
 
-      
-	 
+
+
 		document.getElementById('vB_Editor_001').firstElementChild.appendChild(box);
-	 
+
       unsafeWindow.console.log("ownSmiley :: Smileybox added");
-      
+
       var smilie=document.getElementById('vB_Editor_001_smiliebox');
-      
+
       var replace = "";
-      
-     
-	  
+
+
+
 	  for(var i=0;i<smileys.length;i++){ //#Junk: Dirty, aber dürfte bei den aufkommenden Datenmengen gehen
         if(smileys[i].shortcut != false)
           replace += "vB_Editor['vB_Editor_001'].editor.textarea.$.value; while(vB_Editor['vB_Editor_001'].editor.textarea.$.value.indexOf('"+smileys[i].shortcut+"') !=-1){vB_Editor['vB_Editor_001'].editor.textarea.$.value=vB_Editor['vB_Editor_001'].editor.textarea.$.value.replace('"+smileys[i].shortcut+"', '[img]"+smileys[i].url+"[/img]');}  ";
       }
-	  
-	 
+
+
 	//Mag irgendwie das erste length - Setzen nicht, wegen nem Modification Error
 	document.getElementsByName('vbform')[0].setAttribute("onsubmit", "if(document.getElementById('cb_disablesmilies').checked == false){"+replace+" vB_Editor['vB_Editor_001'].textarea.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value; } YAHOO.util.Event.removeListener(window,'beforeunload'); return vB_Editor['vB_Editor_001'].prepare_submit(this.subject.value, 4)");
-	
-	 
-	  
-      
+
+
+
+
       unsafeWindow.console.log("ownSmiley :: Shortcuts initialized");
-      
+
       // adjust textarea after setting up the shortcut-parsing because the ck-editor is not loaded yet
       if(GM_getValue("adjust", false) == true){
         var str = "if(typeof document.getElementById('cke_contents_vB_Editor_001_editor') != undefined){"+
@@ -320,7 +333,7 @@ function loaded(){
                   "}";
         window.setTimeout(str, 1500);
       }
-      
+
       //beautify  the editor
       if(GM_getValue("beautify", false) == true){
         var standardsmilies = document.getElementById('vB_Editor_001_smiliebox');
@@ -415,11 +428,13 @@ function phrases(langcode){
   this.set          = new Object();
   this.set.adjustment = new Object();
   this.set.beautification = new Object();
-  
+  this.export         = new Object();
+
   this.panel.head     = "Own Smilies";
   this.panel.add      = "Add own smilie";
   this.panel.edit     = "Edit own smilies";
   this.panel.config   = "Settings";
+  this.panel.export   = "Export";
 
   this.add.head       = "Add own smilie";
   this.add.text       = "Insert a new smilie into your smileybox.<br>Later, you can edit or delete it from there by clicking the \"Edit own smilies\"-Link in your control-panel.";
@@ -432,7 +447,7 @@ function phrases(langcode){
   this.add.success    = "Smilie successfully added.";
   this.add.failture   = "Smilie could not be added. You have to fill all form fields.";
   this.add.save       = "Save";
-    
+
   this.edit.head      = "Edit own smilies";
   this.edit.text      = "Choose smilie";
   this.edit.nosmileys = "There are no smilies to edit.";
@@ -451,7 +466,7 @@ function phrases(langcode){
   this.edit.edit.failture = "Smilie could not be edited. You have to fill all form fields.";
   this.edit.noshortcut = "<i>No shortcut defined</i>";
   this.edit.save      = "Save changes";
-    
+
   this.set.head       = "Edit Settings";
   this.set.text       = "Change your settings.";
   this.set.title      = new Array("Own-smiliebox's title", "Box-title");
@@ -466,13 +481,17 @@ function phrases(langcode){
   this.set.boxtitledefault = "Own smilies";
   this.set.success    = "Settings saved";
   this.set.failture   = "Settings count not be saved.<br> You have to fill all form fields.";
-  
+
+  this.export.title   = "Export own smilies";
+  this.export.text    = "Export your own smilies to save them for the next update";
+
   // overwrite language
   if(langcode == "DE"){ //german
     this.panel.head     = "Eigene Smileys";
     this.panel.add      = "Eigenen Smiley hinzufügen";
     this.panel.edit     = "Eigene Smileys bearbeiten";
     this.panel.config   = "Einstellungen";
+    this.panel.export   = "Exportieren";
 
     this.add.head       = "Eigenen Smiley hinzufügen";
     this.add.text       = "Fügt einen Smiley in deine Smileybox hinzu.<br>Später kannst du ihn mit einem Klick auf den \"Eigene Smileys bearbeiten\"-Link in deinem Kontrollzentrum bearbeiten.";
@@ -485,7 +504,7 @@ function phrases(langcode){
     this.add.success    = "Smiley erfolgreich hinzugefügt.";
     this.add.failture   = "Der Smiley wurde nicht hinzugefügt. Es müssen alle Formularfelder ausgefüllt werden.";
     this.add.save       = "Speichern";
-    
+
     this.edit.head      = "Eigene Smileys bearbeiten";
     this.edit.text      = "Wähle einen Smiley aus.";
     this.edit.nosmileys = "Es gibt keine Smileys, die bearbeitet werden könnten.";
@@ -504,7 +523,7 @@ function phrases(langcode){
     this.edit.edit.failture = "Smiley konnte nicht bearbeitet werden. Fülle alle Pflichfelder aus.";
     this.edit.noshortcut = "<i>Kein Shortcut definiert</i>";
     this.edit.save      = "Änderungen speichern";
-    
+
     this.set.head       = "Einstellungen bearbeiten";
     this.set.text       = "Hier können die Einstellungen bearbeitet werden.";
     this.set.title      = new Array("Der Titel der Eigene-Smiley-Box", "Boxtitel");
@@ -520,30 +539,33 @@ function phrases(langcode){
     this.set.success    = "Einstellung gespeichert";
     this.set.failture   = "Einstellungen konnten nicht gespeichert werden.<br>Es müssen alle Formularfelder ausgefüllt werden.";
 
+    this.export.title   = "Eigene Smileys exportieren";
+    this.export.text    = "Exportiere deine eigenen Smileys um sie für das nächste Update zu sichern";
+
   }
 }
 
 function addnewsmiley(url, title, alt, shortcut){
-	
+
   if(url && url !=""){
-	
+
     smileys[smileys.length] = new Object();
     smileys[smileys.length-1].url      = decodeURIComponent(url);
     smileys[smileys.length-1].alt      = (!alt)      ? false : unescape(alt).replace("+"," "); // Alternative Text is optional
     smileys[smileys.length-1].title    = (!title)    ? false : unescape(title).replace("+"," "); // Title is optional
     smileys[smileys.length-1].shortcut = (!shortcut) ? false : unescape(shortcut).replace("+", " "); // shortcut is optional
-    
+
     GM_deleteValue("data"); //delete all smileys
-    
+
     for(var i = 0;i<smileys.length;i++){
       GM_setValue("data."+(i+1)+".alt", smileys[i].alt);
       GM_setValue("data."+(i+1)+".title", smileys[i].title);
       GM_setValue("data."+(i+1)+".url", smileys[i].url);
       GM_setValue("data."+(i+1)+".shortcut", smileys[i].shortcut);
     }
-	
+
     document.getElementById("ownsmiley_body").innerHTML=lang.add.success;
-  } else {  
+  } else {
     document.getElementById("ownsmiley_body").innerHTML=lang.add.failture;
   }
 }
@@ -552,15 +574,15 @@ function hideold(){
   var subthread = document.getElementById("new_subscribed_threads");
   subthread.getElementsByTagName("h2")[0].setAttribute("id", "ownsmiley_head");
   document.getElementById("ownsmiley_head").innerHTML="";
-  
+
   subthread.getElementsByTagName("div")[0].firstElementChild.setAttribute("id", "ownsmiley_body");
   document.getElementById("ownsmiley_body").innerHTML="";
   document.getElementById("ownsmiley_body").style.padding="5px";
   document.getElementById("ownsmiley_body").style.fontSize="10px";
-  
+
   subthread = subthread.getElementsByTagName("div")[0];
   subthread.removeChild(subthread.lastElementChild);
-  
+
   if(document.getElementsByTagName("body")[0].innerHTML.indexOf('id="new_subscribed_forums"')!=-1){ // there are subscribed forums
     document.getElementById("new_subscribed_forums").parentNode.removeChild(document.getElementById("new_subscribed_forums"));
   }
@@ -604,14 +626,17 @@ function contains(array, item)//#Junk: Opera mag irgendwie das mit dem Prototype
 	}
 	return false;
 }
-/*Array.prototype.contains=function(needle){  
-  for(var i=0;i<this.length;i++){
-    if(this[i]==needle){
-      return true;
-    }
-  }
-  return false;
-}*/
+
+var JSON;if (!JSON) {JSON = {};}(function () {'use strict';function f(n) {return n < 10 ? '0' + n : n;}if (typeof Date.prototype.toJSON !== 'function') {Date.prototype.toJSON = function (key) {return isFinite(this.valueOf())? this.getUTCFullYear() + '-' +f(this.getUTCMonth() + 1) + '-' +f(this.getUTCDate()) + 'T' +f(this.getUTCHours()) + ':' +f(this.getUTCMinutes()) + ':' +f(this.getUTCSeconds()) + 'Z': null;
+};String.prototype.toJSON =Number.prototype.toJSON =Boolean.prototype.toJSON = function (key) {return this.valueOf();};}var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta = { '\b': '\\b','\t': '\\t','\n': '\\n','\f': '\\f','\r': '\\r','"' : '\\"','\\': '\\\\'},rep;
+function quote(string) {escapable.lastIndex = 0;return escapable.test(string) ? '"' + string.replace(escapable, function (a) {var c = meta[a];return typeof c === 'string'? c: '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);}) + '"' : '"' + string + '"';}function str(key, holder) {var i, k, v, length,mind = gap,partial,value = holder[key];if (value && typeof value === 'object' &&typeof value.toJSON === 'function') {value = value.toJSON(key);}if (typeof rep === 'function') {value = rep.call(holder, key, value);
+}switch (typeof value) {case 'string':return quote(value);case 'number':return isFinite(value) ? String(value) : 'null';case 'boolean':case 'null':return String(value);case 'object':if (!value) {return 'null';}gap += indent;partial = [];if (Object.prototype.toString.apply(value) === '[object Array]') {length = value.length;for (i = 0; i < length; i += 1) {partial[i] = str(i, value) || 'null';}
+v = partial.length === 0? '[]': gap? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']': '[' + partial.join(',') + ']';gap = mind;return v;}if (rep && typeof rep === 'object') {length = rep.length;for (i = 0; i < length; i += 1) {if (typeof rep[i] === 'string') {k = rep[i];v = str(k, value);if (v) {partial.push(quote(k) + (gap ? ': ' : ':') + v);}}}} else {
+for (k in value) {if (Object.prototype.hasOwnProperty.call(value, k)) {v = str(k, value);if (v) {partial.push(quote(k) + (gap ? ': ' : ':') + v);}}}}v = partial.length === 0? '{}': gap? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}': '{' + partial.join(',') + '}';gap = mind;return v;}}if (typeof JSON.stringify !== 'function') {JSON.stringify = function (value, replacer, space) {
+var i;gap = '';indent = '';if (typeof space === 'number') {for (i = 0; i < space; i += 1) {indent += ' ';}} else if (typeof space === 'string') {indent = space;}rep = replacer;if (replacer && typeof replacer !== 'function' &&(typeof replacer !== 'object' ||typeof replacer.length !== 'number')) {throw new Error('JSON.stringify');}return str('', {'': value});};}if (typeof JSON.parse !== 'function') {
+JSON.parse = function (text, reviver) {var j;function walk(holder, key) {var k, v, value = holder[key];if (value && typeof value === 'object') {for (k in value) {if (Object.prototype.hasOwnProperty.call(value, k)) {v = walk(value, k);if (v !== undefined) {value[k] = v;} else {delete value[k];}}}}return reviver.call(holder, key, value);}text = String(text);cx.lastIndex = 0;
+if (cx.test(text)) {text = text.replace(cx, function (a) {return '\\u' +('0000' + a.charCodeAt(0).toString(16)).slice(-4);});}if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {j = eval('(' + text + ')');return typeof reviver === 'function'? walk({'': j}, ''): j;}throw new SyntaxError('JSON.parse');};}}());
+
 
 document.getElementsByClassName = function(classname){
   var nodes = document.getElementsByTagName("*");
@@ -625,9 +650,9 @@ document.getElementsByClassName = function(classname){
   return ret;
 }
 var cPanelFiles;
-var editorFiles; 
-var lang;        
-var smileys;    
-var images;    
+var editorFiles;
+var lang;
+var smileys;
+var images;
 
 //asd
