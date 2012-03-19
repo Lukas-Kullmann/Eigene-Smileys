@@ -9,7 +9,14 @@ if(!isset($_GET['dontsave']))
 
 function parseFile($filename, $compress = 1, $functions = array('/include\(([^)]+)\)/ei' => 'parseFile(\'$1\')', '#//.*#' => '', '#/\*.*?\*/#s' => '')){
     $compiled = '';
-    if(file_exists('.'.DIRECTORY_SEPARATOR.$filename)){
+
+    if(substr($filename, -1) == '*'){
+        $dir = substr($filename, 0, strlen($filename)-1);
+        $files = scandir('.'.DIRECTORY_SEPARATOR.$dir);
+        foreach($files as $file)
+            if(!($file == '.' || $file == '..' || is_dir($file)))
+                $compiled .= parseFile($dir.$file);
+    } elseif(file_exists('.'.DIRECTORY_SEPARATOR.$filename)){
         // datei exitiert überhaupt
         $compiled = file_get_contents('.'.DIRECTORY_SEPARATOR.$filename);
 
