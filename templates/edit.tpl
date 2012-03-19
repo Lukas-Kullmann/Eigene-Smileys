@@ -12,7 +12,6 @@
 {%
 for(var i = 0; i < o.length; i++) {
 var j = i+1;
-if(!o[i].shortcut) { o[i].shortcut = getLang('edit/noshortcut'); }
 if(!o[i].alt) {      o[i].alt      = ""; }
 if(!o[i].title) {    o[i].title    = ""; }
 %}
@@ -20,7 +19,7 @@ if(!o[i].title) {    o[i].title    = ""; }
                 <td>
                     <img border="0" title="" alt="{%=o[i].alt%}" src="{%=o[i].url%}">
                 </td>
-                <td style="font-weight: bold; vertical-align: middle;">{%=o[i].shortcut%}</td>
+                <td style="font-weight: bold; vertical-align: middle;">{% if(o[i].shortcut) { print(o[i].shortcut); } else { print(getLang('edit/noshortcut'), true); } %}</td>
                 <td style="text-align: right;">
                     <input type="radio" id="input_{%=j%}" value="{%=j%}" name="smilie">
                 </td>
@@ -36,7 +35,7 @@ if(!o[i].title) {    o[i].title    = ""; }
     <br>
     <select name="process">
         <option value="edit">{%=getLang('edit/select/edit')%}</option>
-        <option value="delete">{%=getLang('edit/select/delete')%}</option>
+        <option value="delete">{%=getLang('edit/select/remove')%}</option>
     </select>
     <br>
     <br>

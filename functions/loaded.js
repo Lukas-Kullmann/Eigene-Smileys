@@ -3,11 +3,11 @@ function loaded(){
     var get      = getGet();
     if(jQuery.inArray(fileName, cPanelFiles)!=-1){ //controlpanel-page
         // sitebar erstellen
-        jQuery('#usercp_nav').append(tmpl('include(templates/sitebar.tpl)', [{link:'add', title: 'panel/add'}, {link:'edit', title: 'panel/edit'}, {link:'set', title: 'panel/config'}]));
+        jQuery('#usercp_nav').append(tmpl('include(templates/sitebar.tpl)', [{'link':'add', 'title':'panel/add'}, {'link':'edit', 'title':'panel/edit'}, {'link':'set', 'title':'panel/config'}, {'link':'import', 'title':'panel/import'}]));
 
         if(fileName=="usercp"){ //possible editing-page
+            if(get.ownsmilie) { hideold(); }
             if(get.ownsmilie == "add"){ // add smiley
-                hideold();
                 jQuery('#ownsmilie_head').html(getLang('add/head'));
                 if(get.length > 1){ // form was submitted
                     addnewsmilie(get.url, get.title, get.alt, get.shortcut);
@@ -15,7 +15,6 @@ function loaded(){
                     jQuery('#ownsmilie_body').html(tmpl('include(templates/addform.tpl)'));
                 }
             } else if(get.ownsmilie == "edit"){ // edit smiley
-                hideold();
                 jQuery('#ownsmilie_head').html(getLang('edit/head'));
                 if(smilies.length == 0){
                     jQuery('#ownsmilie_body').html(getLang('edit/nosmilies'));
@@ -72,7 +71,6 @@ function loaded(){
                     }
                 }
             } else if(get.ownsmilie == "set"){ //settings
-                hideold();
                 jQuery('#ownsmilie_head').html(getLang('set/head'));
                 if(get.length > 1){
                     if(!(get.title && get.adjust && get.lang && get.title != "")){
@@ -103,6 +101,27 @@ function loaded(){
                     }
 
                     jQuery('#ownsmilie_body').html(tmpl('include(templates/settings.tpl)', {'title': boxtitle, 'lang':lang, 'adjust': adjust, 'beautify': beautify}));
+                }
+            } else if(get.ownsmilie == "import") {
+                jQuery('#ownsmilie_head').html(getLang('import/head'));
+                if(get.step){
+                    var importsmilies = JSON.parse(cookies.get('ownsmilie_import'));
+                    if(get.replace){
+                        smilies = importsmilies;
+                    } else {
+                        smilies = $.merge(smilies, importsmilies);
+                    }
+                    cookies.delete('ownsmilie_import');
+                    deleteAll();
+                    for(var i = 0;i<smilies.length;i++){
+                        GM_setValue("data."+(i+1)+".alt", smilies[i].alt);
+                        GM_setValue("data."+(i+1)+".title", smilies[i].title);
+                        GM_setValue("data."+(i+1)+".url", smilies[i].url);
+                        GM_setValue("data."+(i+1)+".shortcut", smilies[i].shortcut);
+                    }
+                    jQuery('#ownsmilie_body').html(getLang('import/import/success'));
+                } else {
+                    jQuery('#ownsmilie_body').html(tmpl('include(templates/import.tpl)'));
                 }
             }
         }

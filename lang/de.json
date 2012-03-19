@@ -3,7 +3,8 @@
         'head':     "Eigene Smileys",
         'add':      "Eigenen Smiley hinzufügen",
         'edit':     "Eigene Smileys bearbeiten",
-        'config':   "Einstellungen"
+        'config':   "Einstellungen",
+        'import':   "Importieren/Exportieren"
     },
     'add': {
         'head':     "Eigenen Smiley hinzufügen",
@@ -61,5 +62,19 @@
         'boxtitledefault': "Eigene Smileys",
         'success':      "Einstellung gespeichert",
         'failure':      "Einstellungen konnten nicht gespeichert werden.<br>Es müssen alle Formularfelder ausgefüllt werden."
+    },
+    'import': {
+        'head': "Smileys im- oder exportieren",
+        'export': {
+            'head': "Smileys exportieren",
+            'text': "Kopiere den Inhalt des Textfeldes um deine Smileys auf einem anderen PC oder einem anderen Browser verwenden zu können."
+        },
+        'import': {
+            'head': "Smileys importieren",
+            'string': "Importstring aus dem Exportieren-Textfeld",
+            'replace': "Smileys ersetzen (löscht alle alten Smileys. Danach sind nur die importieren Smileys verfügbar.)",
+            'button': "Smileys importieren",
+            'success': "Smileys erfolgreich importiert"
+        }
     }
 }

@@ -1,4 +1,4 @@
-{%=getLang('add/text')%}
+{%#getLang('add/text')%}
 <br>
 <br>
 <br>

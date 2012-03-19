@@ -30,6 +30,7 @@ function parseFile($filename, $compress = 1, $functions = array('/include\(([^)]
 
         if(substr($filename, -3) == 'tpl'){
             $compress = PHP_INT_MAX;
+            $compiled = str_replace("\'", "\\\\'", $compiled);
             $compiled = str_replace("'", "\'", $compiled);
         }
 
