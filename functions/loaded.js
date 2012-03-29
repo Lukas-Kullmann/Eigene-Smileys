@@ -144,19 +144,18 @@ function loaded(){
 
             // adjust textarea after setting up the shortcut-parsing because the ck-editor is not loaded yet
             if(GM_getValue("adjust", false) == true){
-                var str = "if(typeof document.getElementById('cke_contents_vB_Editor_001_editor') != undefined){"+
-                "var newheight = 203 + document.getElementById('own_smiliebox').offsetHeight;"+
-                "var oldheight = document.getElementById('cke_vB_Editor_001_editor').offsetHeight;"+
-                "var height = document.getElementById('cke_contents_vB_Editor_001_editor').offsetHeight;"+
-                "if(newheight > oldheight){"+
-                "height += newheight - oldheight;"+
-                "}"+
-                "document.getElementById('cke_contents_vB_Editor_001_editor').style.height = height+'px';"+
-                "console.log('ownSmilie :: Textareaheight adjusted');"+
-                "} else {"+
-                "window.setTimeout(str, 500);"+
-                "}";
-                window.setTimeout(str, 1500);
+                unsafeWindow.CKEDITOR.on('instanceReady', function(){
+                    var newheight = 214 + jQuery('#own_smiliebox').outerHeight(true),
+                    oldheight = jQuery('#cke_vB_Editor_001_editor').outerHeight(true),
+                    height = jQuery('#cke_contents_vB_Editor_001_editor').outerHeight(true);
+
+                    if(newheight > oldheight){
+                        height += newheight - oldheight;
+                    }
+
+                    jQuery('#cke_contents_vB_Editor_001_editor').css('height', height+'px');
+                    unsafeWindow.console.log('ownSmilie :: Textareaheight adjusted');
+                });
             }
         } else {
             unsafeWindow.console.log("ownSmilies :: There are no smilies");

@@ -5,7 +5,7 @@
 var exportstring = JSON.stringify(smilies);
 var rows = Math.round(exportstring.length/150)+3;
 %}
-    <textarea cols="150" rows="{% if(rows > 20) { print(20); } else { print(rows); }%}">{%=exportstring%}</textarea>
+    <textarea cols="150" rows="{% if(rows > 20) { print(20); } else { print(rows); }%}" readonly onclick="this.select();">{%=exportstring%}</textarea>
 </fieldset>
 <fieldset class="fieldset" style="border: 2px solid white; padding: 5px;">
     <legend>{%=getLang('import/import/head')%}</legend>
