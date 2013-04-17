@@ -79,7 +79,7 @@ function loaded(){
                         GM_setValue("boxtitle", decodeURIComponent(get.title.replace("+", " ")));
                         GM_setValue("adjust", (get.adjust==1)?true:false);
                         GM_setValue("beautify", (get.beautify==1)?true:false);
-                        GM_setValue("lang", (get.lang=="de")?"de":"en");
+                        GM_setValue("lang", get.lang);
                         jQuery('#ownsmilie_body').html(getLang('set/success'));
                     }
                 } else {
@@ -138,7 +138,7 @@ function loaded(){
                 if(smilies[i].shortcut != false)
                     replace += "vB_Editor['vB_Editor_001'].editor.textarea.$.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value.replace(new RegExp('"+smilies[i].shortcut+"', 'g'), '[img]"+smilies[i].url+"[/img]'); ";
             }
-            jQuery('.vbform:first').attr("onsubmit", "if(document.getElementById('cb_disablesmilies').checked == false){"+replace+" vB_Editor['vB_Editor_001'].editor.textarea.$.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length; vB_Editor['vB_Editor_001'].textarea.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value; vB_Editor['vB_Editor_001'].textarea.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length;} YAHOO.util.Event.removeListener(window,'beforeunload'); return vB_Editor['vB_Editor_001'].prepare_submit(this.subject.value, 4)");
+            jQuery('#vB_Editor_001').parents('.vbform')[0].setAttribute("onsubmit", "if(document.getElementById('cb_disablesmilies').checked == false){"+replace+" vB_Editor['vB_Editor_001'].editor.textarea.$.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length; vB_Editor['vB_Editor_001'].textarea.value = vB_Editor['vB_Editor_001'].editor.textarea.$.value; vB_Editor['vB_Editor_001'].textarea.textLength = vB_Editor['vB_Editor_001'].editor.textarea.$.value.length;} YAHOO.util.Event.removeListener(window,'beforeunload'); return vB_Editor['vB_Editor_001'].prepare_submit(this.subject.value, 4)");
 
             unsafeWindow.console.log("ownSmilie :: Shortcuts initialized");
 

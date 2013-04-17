@@ -10,7 +10,7 @@
     <span title="{%=getLang('set/lang[0]')%}">{%=getLang('set/lang[1]')%}</span>
     <br>
     <select name="lang">
-        <option value="en"{% if(o.lang == 'en'){ print(' selected'); } %}>English</option>
+        <!--<option value="en"{% if(o.lang == 'en'){ print(' selected'); } %}>English</option>-->
         <option value="de"{% if(o.lang == 'de'){ print(' selected'); } %}>Deutsch</option>
     </select>
     <br>

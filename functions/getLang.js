@@ -1,7 +1,12 @@
 function getLang(path){
-    var lang = {'de': include(lang/de.json)};
+    var lang = {'de': include(lang/de.json)}, locale = GM_getValue("lang", "de").toLowerCase();
 
-    lang = lang[GM_getValue("lang", "de").toLowerCase()];
+    if(lang[locale] === undefined) {
+        GM_setValue("lang", "de");
+        lang = lang['de'];
+    } else {
+        lang = lang[locale];
+    }
 
     var parts = path.split('/'), match = '';
 
@@ -25,5 +30,6 @@ function getLang(path){
             }
         }
     }
+    
     return lang;
 }
