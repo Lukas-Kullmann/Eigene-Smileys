@@ -9,13 +9,13 @@ function addnewsmilie(url, title, alt, shortcut){
     deleteAll(); //delete all smilies
 
     for(var i = 0;i<smilies.length;i++){
-      GM_setValue("data."+(i+1)+".alt", smilies[i].alt);
-      GM_setValue("data."+(i+1)+".title", smilies[i].title);
-      GM_setValue("data."+(i+1)+".url", smilies[i].url);
-      GM_setValue("data."+(i+1)+".shortcut", smilies[i].shortcut);
+      window.localStorage["ownsmiley.data."+(i+1)+".alt"]      =  smilies[i].alt;
+      window.localStorage["ownsmiley.data."+(i+1)+".title"]    = smilies[i].title;
+      window.localStorage["ownsmiley.data."+(i+1)+".url"]      = smilies[i].url;
+      window.localStorage["ownsmiley.data."+(i+1)+".shortcut"] = smilies[i].shortcut;
     }
-    document.getElementById("ownsmiley_body").innerHTML=lang.add.success;
+    jQuery('#ownsmilie_body').html(getLang('add/success'));
   } else {
-    document.getElementById("ownsmiley_body").innerHTML=lang.add.failture;
+    jQuery('#ownsmilie_body').html(getLang('add/failure'));
   }
 }

@@ -1,8 +1,15 @@
 function getLang(path){
-    var lang = {'de': include(lang/de.json)}, locale = GM_getValue("lang", "de").toLowerCase();
+    var lang = {'de': include(lang/de.json)}, locale = window.localStorage["ownsmiley.lang"];
+
+    if(locale === undefined) {
+        window.localStorage["ownsmiley.lang"] = 'de';
+        locale = 'de';
+    } else {
+        locale = locale.toLowerCase();
+    }
 
     if(lang[locale] === undefined) {
-        GM_setValue("lang", "de");
+        window.localStorage["ownsmiley.lang"] = 'de';
         lang = lang['de'];
     } else {
         lang = lang[locale];

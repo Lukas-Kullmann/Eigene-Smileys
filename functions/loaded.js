@@ -42,10 +42,10 @@ function loaded(){
                                     deleteAll();
 
                                     for(var i = 0;i<smilies.length;i++){
-                                        GM_setValue("data."+(i+1)+".alt", smilies[i].alt);
-                                        GM_setValue("data."+(i+1)+".title", smilies[i].title);
-                                        GM_setValue("data."+(i+1)+".url", smilies[i].url);
-                                        GM_setValue("data."+(i+1)+".shortcut", smilies[i].shortcut);
+                                        window.localStorage["ownsmiley.data."+(i+1)+".alt"] = smilies[i].alt;
+                                        window.localStorage["ownsmiley.data."+(i+1)+".title"]         = smilies[i].title;
+                                        window.localStorage["ownsmiley.data."+(i+1)+".url"]           = smilies[i].url;
+                                        window.localStorage["ownsmiley.data."+(i+1)+".shortcut"]      = smilies[i].shortcut;
                                     }
 
                                     jQuery('#ownsmilie_body').html(getLang('edit/edit/success'));
@@ -56,10 +56,10 @@ function loaded(){
                             var k=0;
                             for(var i=0;i<smilies.length; i++){
                                 if(i!=(get.smilie-1)){
-                                    GM_setValue("data."+(k+1)+".alt", smilies[i].alt);
-                                    GM_setValue("data."+(k+1)+".title", smilies[i].title);
-                                    GM_setValue("data."+(k+1)+".url", smilies[i].url);
-                                    GM_setValue("data."+(k+1)+".shortcut", smilies[i].shortcut);
+                                    window.localStorage["ownsmiley.data."+(k+1)+".alt"] = smilies[i].alt;
+                                    window.localStorage["ownsmiley.data."+(k+1)+".title"] = smilies[i].title;
+                                    window.localStorage["ownsmiley.data."+(k+1)+".url"] = smilies[i].url;
+                                    window.localStorage["ownsmiley.data."+(k+1)+".shortcut"] = smilies[i].shortcut;
 
                                     k++;
                                 }
@@ -76,17 +76,25 @@ function loaded(){
                     if(!(get.title && get.adjust && get.lang && get.title != "")){
                         jQuery('#ownsmilie_body').html(getLang('set/failure'));
                     } else {
-                        GM_setValue("boxtitle", decodeURIComponent(get.title.replace("+", " ")));
-                        GM_setValue("adjust", (get.adjust==1)?true:false);
-                        GM_setValue("beautify", (get.beautify==1)?true:false);
-                        GM_setValue("lang", get.lang);
+                        window.localStorage["ownsmiley.boxtitle"] = decodeURIComponent(get.title.replace("+", " "));
+                        window.localStorage["ownsmiley.adjust"]   = (get.adjust==1);
+                        window.localStorage["ownsmiley.beautify"] = (get.beautify==1);
+                        window.localStorage["ownsmiley.lang"]     = get.lang;
                         jQuery('#ownsmilie_body').html(getLang('set/success'));
                     }
                 } else {
-                    var boxtitle = GM_getValue("boxtitle", getLang('set/boxtitledefault')),
-                        lang = GM_getValue('lang','de').toLowerCase(),
-                        adjust = GM_getValue("adjust", false),
-                        beautify = GM_getValue("beautify", false);
+                    var boxtitle = window.localStorage["ownsmiley.boxtitle"],
+                        lang     = window.localStorage['ownsmiley.lang'],
+                        adjust   = window.localStorage["ownsmiley.adjust"],
+                        beautify = window.localStorage["ownsmiley.beautify"];
+
+                    if(boxtitle === undefined) {
+                        boxtitle = getLang('set/boxtitledefault');
+                    }
+
+                    if(lang === undefined) {
+                        boxtitle = 'de';
+                    }
 
                     if(adjust){
                         adjust = 1;
@@ -114,10 +122,10 @@ function loaded(){
                     cookies.delete('ownsmilie_import');
                     deleteAll();
                     for(var i = 0;i<smilies.length;i++){
-                        GM_setValue("data."+(i+1)+".alt", smilies[i].alt);
-                        GM_setValue("data."+(i+1)+".title", smilies[i].title);
-                        GM_setValue("data."+(i+1)+".url", smilies[i].url);
-                        GM_setValue("data."+(i+1)+".shortcut", smilies[i].shortcut);
+                        window.localStorage["ownsmiley.data."+(i+1)+".alt"]      = smilies[i].alt;
+                        window.localStorage["ownsmiley.data."+(i+1)+".title"]    = smilies[i].title;
+                        window.localStorage["ownsmiley.data."+(i+1)+".url"]      = smilies[i].url;
+                        window.localStorage["ownsmiley.data."+(i+1)+".shortcut"] = smilies[i].shortcut;
                     }
                     jQuery('#ownsmilie_body').html(getLang('import/import/success'));
                 } else {
@@ -130,7 +138,13 @@ function loaded(){
     if(jQuery.inArray(fileName, editorFiles)!=-1 || (fileName == "private" && get["do"] == "newpm")){ // add smiliebox
         unsafeWindow.console.log("ownSmilie :: Editorfile");
         if(smilies.length>0){
-            jQuery('#vB_Editor_001 > div:first-child').append(tmpl('include(templates/smiliebox.tpl)', {len: smilies.length, boxtitle: GM_getValue("boxtitle", getLang('set/boxtitledefault'))}));
+            var boxtitle = window.localStorage["ownsmiley.boxtitle"];
+
+            if(boxtitle === undefined) {
+                boxtitle = getLang('set/boxtitledefault');
+            }
+
+            jQuery('#vB_Editor_001 > div:first-child').append(tmpl('include(templates/smiliebox.tpl)', {len: smilies.length, 'boxtitle': boxtitle}));
 
             var replace = "";
 
@@ -143,7 +157,7 @@ function loaded(){
             unsafeWindow.console.log("ownSmilie :: Shortcuts initialized");
 
             // adjust textarea after setting up the shortcut-parsing because the ck-editor is not loaded yet
-            if(GM_getValue("adjust", false) == true){
+            if(window.localStorage["ownsmiley.adjust"] === "true"){
                 unsafeWindow.CKEDITOR.on('instanceReady', function(){
                     var newheight = 214 + jQuery('#own_smiliebox').outerHeight(true),
                     oldheight = jQuery('#cke_vB_Editor_001_editor').outerHeight(true),
@@ -161,7 +175,7 @@ function loaded(){
             unsafeWindow.console.log("ownSmilies :: There are no smilies");
         }
         //beautify  the editor
-        if(GM_getValue("beautify", false) == true){
+        if(window.localStorage["ownsmiley.beautify"] === "true"){
             var standardsmilies = document.getElementById('vB_Editor_001_smiliebox');
             standardsmilies.style.height = "175px";
             standardsmilies = standardsmilies.parentNode;
